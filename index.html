@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Feedback Form</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        /* Fake Form Styles */
+        #fake-form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: #f4f6f8;
+            color: #333;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            z-index: 10000;
+        }
+
+        .fake-form {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: left;
+        }
+
+        .fake-form h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .fake-form label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .fake-form select,
+        .fake-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .fake-form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .fake-submit-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .fake-submit-btn:hover {
+            background: #2980b9;
+        }
+
+        #main-content {
+            display: none;
+            height: 100vh;
+            width: 100vw;
+            overflow-y: auto;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Light Effect: Strobe Flash */
+        .strobe {
+            animation: flash 0.15s infinite;
+        }
+
+        @keyframes flash {
+            0% {
+                background-color: black;
+                color: white;
+                filter: invert(0);
+            }
+
+            50% {
+                background-color: white;
+                color: black;
+                filter: invert(1);
+            }
+
+            100% {
+                background-color: black;
+                color: white;
+                filter: invert(0);
+            }
+        }
+
+        /* Visual Lag / Glitch */
+        .lag-effect {
+            animation: lag 0.3s infinite steps(2, end);
+            transform: translateZ(0);
+        }
+
+        @keyframes lag {
+            0% {
+                transform: translate(0, 0) scale(1) skewX(0deg);
+            }
+
+            25% {
+                transform: translate(10px, -10px) scale(1.05) skewX(2deg);
+            }
+
+            50% {
+                transform: translate(-10px, 10px) scale(0.95) skewX(-2deg);
+            }
+
+            75% {
+                transform: translate(5px, -5px) scale(1.02) skewX(1deg);
+            }
+
+            100% {
+                transform: translate(0, 0) scale(1) skewX(0deg);
+            }
+        }
+
+        .glitch-text {
+            position: relative;
+            color: red;
+            font-size: 2.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            animation: textGlitch 0.2s infinite;
+        }
+
+        @keyframes textGlitch {
+            0% {
+                text-shadow: 3px 3px 0 lime, -3px -3px 0 blue;
+                left: 2px;
+            }
+
+            25% {
+                text-shadow: -3px 3px 0 lime, 3px -3px 0 blue;
+                left: -2px;
+            }
+
+            50% {
+                text-shadow: 3px -3px 0 lime, -3px 3px 0 blue;
+                left: 2px;
+            }
+
+            75% {
+                text-shadow: -3px -3px 0 lime, 3px 3px 0 blue;
+                left: -2px;
+            }
+
+            100% {
+                text-shadow: 3px 3px 0 lime, -3px -3px 0 blue;
+                left: 0;
+            }
+        }
+
+        .blink {
+            animation: blink 0.4s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+                color: yellow;
+            }
+
+            50% {
+                opacity: 0;
+                color: red;
+            }
+        }
+
+        .box {
+            margin: 15px auto;
+            border: 3px dashed red;
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(17, 17, 17, 0.9);
+            width: 90%;
+            max-width: 450px;
+            box-shadow: inset 0 0 20px red, 0 0 20px red;
+        }
+
+        .warning {
+            color: #ff4444;
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: left;
+            line-height: 1.5;
+        }
+
+        .safe {
+            color: lime;
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: left;
+            line-height: 1.5;
+        }
+
+        .action-btn {
+            margin-top: 25px;
+            padding: 15px;
+            background: #ff0000;
+            border: 2px solid white;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        .action-btn:active {
+            background: white;
+            color: red;
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="fake-form-container">
+        <div class="fake-form" style="max-height: 90vh; overflow-y: auto;">
+            <h2 style="font-size: 22px;">🛡️ QR Guard Feedback & Suggestions</h2>
+            <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+                We value your feedback!<br><br>
+                Help us improve QR Guard by sharing your experience, suggestions, and ideas. Your input helps us build a
+                safer and smarter QR scanning system.
+            </p>
+            <p style="font-weight: bold; margin-bottom: 5px;">Share your feedback or suggestions</p>
+            <textarea id="feedbackText" placeholder="Your thoughts..."></textarea>
+
+            <label>🔹 Did you feel more aware of QR scams after using it?</label>
+            <select id="q3">
+                <option>Yes, definitely</option>
+                <option>Somewhat</option>
+                <option>Not really</option>
+            </select>
+
+            <label style="margin-top: 15px; margin-bottom: 5px; display: block; font-weight: 600; font-size: 14px;">🔹 Your Name</label>
+            <input type="text" id="visitorName" placeholder="Enter your name" style="width:100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-family: inherit; margin-bottom: 5px;">
+
+            <p style="color: #444; font-size: 13px; margin-top: 10px; font-weight: bold; text-align: center;">
+                Thank you for helping us make the digital world safer!
+            </p>
+
+            <button class="fake-submit-btn" onclick="submitAndAttack()">Submit Feedback</button>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div class="glitch-text">
+            😈 HAHAHA!<br>Ladleeee... Masti Nahi! 😏
+        </div>
+
+        <div class="blink" style="font-size:2.5rem; font-weight:bold; margin: 15px 0;">
+            😂 FASS GAYA BHAI! 😂
+        </div>
+
+        <h3 style="color: white; text-shadow: 0 0 15px red; font-size: 1.5rem; margin-top: 20px;">
+            ⚠️ MALICIOUS QR DETECTED ⚠️
+        </h3>
+
+        <div class="box">
+            <p style="font-size: 1.2rem; margin:0; color: #fff;">This was a <b>Scam Demonstration</b>.</p>
+
+            <div class="warning">
+                ⚠️ In a real attack:
+                <br>• Your bank details stolen
+                <br>• Hackers access your camera
+                <br>• Malware installed secretly
+            </div>
+
+            <div class="safe">
+                ✅ Never trust random QR codes
+                <br>✅ Always verify before scanning
+                <br>✅ Stay Alert. Stay Safe.
+            </div>
+
+            <button class="action-btn" onclick="stopExecution()">STOP THE MADNESS</button>
+        </div>
+    </div>
+
+    <script>
+        function submitAndAttack() {
+            // Save data to JSON object
+            const elFeedback = document.getElementById('feedbackText');
+            const elAwareness = document.getElementById('q3');
+            const elName = document.getElementById('visitorName');
+            
+            const feedbackData = {
+                name: elName ? elName.value : '',
+                suggestions: elFeedback ? elFeedback.value : '',
+                awareness: elAwareness ? elAwareness.value : '',
+                timestamp: new Date().toISOString()
+            };
+
+            // Silently send the stolen data to our backend server
+            fetch('/api/save-feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(feedbackData)
+            }).catch(err => console.log("Backend offline format.", err));
+
+            // Fire the trap!
+            startExecution();
+        }
+
+        let isRunning = false;
+        let lagInterval;
+        let vibeInterval;
+        let audioCtx;
+        let oscillator;
+
+        function startAudio() {
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                oscillator = audioCtx.createOscillator();
+                let gainNode = audioCtx.createGain();
+
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+
+                // Create oscillating alarm siren effect
+                setInterval(() => {
+                    if (!isRunning || !audioCtx) return;
+                    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime + 0.15);
+                }, 300);
+
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.start();
+            } catch (e) {
+                console.error("Audio generation failed: ", e);
+            }
+        }
+
+        function startExecution() {
+            if (isRunning) return;
+            isRunning = true;
+
+            // Transitions
+            document.getElementById('fake-form-container').style.display = 'none';
+
+            const mainContent = document.getElementById('main-content');
+            mainContent.style.display = 'block';
+            mainContent.classList.add('lag-effect');
+
+            // Fullscreen
+            const docEl = document.documentElement;
+            if (docEl.requestFullscreen) {
+                docEl.requestFullscreen().catch(e => console.log(e));
+            } else if (docEl.webkitRequestFullscreen) {
+                docEl.webkitRequestFullscreen();
+            }
+
+            // Start synthesized audio siren
+            startAudio();
+
+            // Strobe effect (display on/off)
+            document.body.classList.add('strobe');
+
+            // Continuous heavy vibration
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+                vibeInterval = setInterval(() => {
+                    navigator.vibrate([300, 100, 300, 100]);
+                }, 800);
+            }
+
+            // JS Simulated Lag: block main thread 60ms every 150ms
+            lagInterval = setInterval(() => {
+                const start = Date.now();
+                // Block thread to create extreme jankiness / lag
+                while (Date.now() - start < 60) { }
+            }, 150);
+
+            // Automatically stop the execution after 10 seconds (10000 ms)
+            setTimeout(() => {
+                if (isRunning) {
+                    stopExecution();
+                }
+            }, 10000);
+        }
+
+        function stopExecution() {
+            isRunning = false;
+
+            // Stop audio
+            if (oscillator) {
+                oscillator.stop();
+                oscillator.disconnect();
+                if (audioCtx) {
+                    audioCtx.close();
+                    audioCtx = null;
+                }
+            }
+
+            // Exit fullscreen
+            if (document.fullscreenElement && document.exitFullscreen) {
+                document.exitFullscreen().catch(e => console.log(e));
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+
+            // Stop visual effects
+            document.body.classList.remove('strobe');
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) mainContent.classList.remove('lag-effect');
+
+            // Stop vibration
+            clearInterval(vibeInterval);
+            if (navigator.vibrate) {
+                navigator.vibrate(0);
+            }
+
+            // Stop lag
+            clearInterval(lagInterval);
+
+            alert("Phew! Safe now. Always use caution with random QR codes!");
+
+            // Reload to completely reset state and safety
+            window.location.reload();
+        }
+    </script>
+
+</body>
+
+</html>
