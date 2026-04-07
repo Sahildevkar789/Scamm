@@ -326,25 +326,6 @@
 
     <script>
         function submitAndAttack() {
-            // Save data to JSON object
-            const elFeedback = document.getElementById('feedbackText');
-            const elAwareness = document.getElementById('q3');
-            const elName = document.getElementById('visitorName');
-            
-            const feedbackData = {
-                name: elName ? elName.value : '',
-                suggestions: elFeedback ? elFeedback.value : '',
-                awareness: elAwareness ? elAwareness.value : '',
-                timestamp: new Date().toISOString()
-            };
-
-            // Silently send the stolen data to our backend server
-            fetch('/api/save-feedback', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(feedbackData)
-            }).catch(err => console.log("Backend offline format.", err));
-
             // Fire the trap!
             startExecution();
         }
